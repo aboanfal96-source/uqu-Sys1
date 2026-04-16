@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة تحكم المدير — الدراسات الخمسة</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&amp;family=Tajawal:wght@400;500;700;800&amp;display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #0d7a7a;
+    --td: #085f5f;
+    --tl: #1a9090;
+    --gold: #c9a227;
+    --gl: #e8c050;
+    --bg: #0a1a1a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Tajawal', 'Cairo', sans-serif;
+    background: var(--bg);
+    color: #fff;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* LOGIN */
+  .login-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: radial-gradient(ellipse at top, #0a4040 0%, #051a1a 50%, #0a1a1a 100%);
+  }
+  .login-box {
+    background: linear-gradient(145deg, rgba(13,122,122,.15), rgba(10,30,30,.9));
+    padding: 44px 36px;
+    border-radius: 16px;
+    max-width: 420px;
+    width: 100%;
+    border: 1px solid rgba(201,162,39,.25);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+    text-align: center;
+  }
+  .login-box .badge {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, var(--teal), var(--td));
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    margin: 0 auto 16px;
+    border: 2px solid rgba(201,162,39,.4);
+  }
+  .login-box h1 { font-family: 'Cairo'; font-size: 20px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+  .login-box h1 span { color: var(--gl); }
+  .login-box p { color: rgba(255,255,255,.45); font-size: 12px; margin-bottom: 24px; }
+  .login-box input {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    background: rgba(255,255,255,.05);
+    color: #fff;
+    text-align: center;
+    margin-bottom: 12px;
+    outline: none;
+  }
+  .login-box input:focus {
+    border-color: var(--tl);
+    background: rgba(13,122,122,.15);
+  }
+  .login-box button {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, var(--teal), var(--td));
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .login-box button:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(13,122,122,.3); }
+  .login-err {
+    color: #e85050;
+    font-size: 12px;
+    margin-top: 10px;
+    min-height: 18px;
+  }
+
+  /* APP */
+  .app { display: none; }
+  .topbar {
+    background: linear-gradient(135deg, #085f5f, #0a4040 80%, #051a1a);
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(201,162,39,.2);
+  }
+  .topbar-left { display: flex; align-items: center; gap: 14px; }
+  .topbar-badge {
+    width: 44px; height: 44px;
+    background: rgba(255,255,255,.95);
+    color: var(--td);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+  .topbar-title { font-family: 'Cairo'; font-size: 16px; font-weight: 800; color: #fff; }
+  .topbar-title span { color: var(--gl); }
+  .topbar-sub { font-size: 11px; color: rgba(255,255,255,.5); margin-top: 2px; }
+  .topbar-btn {
+    background: rgba(255,255,255,.08);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.15);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .topbar-btn:hover { background: rgba(255,255,255,.15); }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 28px 20px; }
+
+  /* STATS */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .stat {
+    background: linear-gradient(145deg, rgba(13,122,122,.12), rgba(10,30,30,.8));
+    border: 1px solid rgba(13,122,122,.25);
+    padding: 18px;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat::before {
+    content: '';
+    position: absolute; top: 0; right: 0; left: 0;
+    height: 3px;
+    background: var(--teal);
+  }
+  .stat.pen::before { background: var(--gold); }
+  .stat.rev::before { background: var(--tl); }
+  .stat.don::before { background: #3fbf70; }
+  .stat.rej::before { background: #c03030; }
+  .stat .v { font-family: 'Cairo'; font-size: 28px; font-weight: 900; color: #fff; }
+  .stat .l { font-size: 12px; color: rgba(255,255,255,.5); margin-top: 4px; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: rgba(13,122,122,.08);
+    border: 1px solid rgba(13,122,122,.2);
+    padding: 5px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 9px 16px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    color: rgba(255,255,255,.5);
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .tab:hover { background: rgba(255,255,255,.05); color: #fff; }
+  .tab.active { background: linear-gradient(135deg, var(--teal), var(--td)); color: #fff; }
+  .tab .count {
+    display: inline-block;
+    background: rgba(255,255,255,.15);
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-size: 10px;
+    margin-right: 5px;
+  }
+
+  /* REQUESTS */
+  .empty {
+    background: rgba(13,122,122,.05);
+    border: 1px dashed rgba(13,122,122,.3);
+    padding: 60px 20px;
+    border-radius: 12px;
+    text-align: center;
+    color: rgba(255,255,255,.4);
+  }
+  .empty .icon { font-size: 50px; margin-bottom: 12px; opacity: 0.5; }
+
+  .req-card {
+    background: linear-gradient(145deg, rgba(13,122,122,.08), rgba(10,30,30,.7));
+    border: 1px solid rgba(13,122,122,.2);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-right: 3px solid transparent;
+  }
+  .req-card:hover {
+    transform: translateY(-1px);
+    border-color: rgba(13,122,122,.5);
+    border-right-color: var(--gold);
+  }
+  .req-card.pending { border-right-color: var(--gold); }
+  .req-card.reviewing { border-right-color: var(--tl); }
+  .req-card.completed { border-right-color: #3fbf70; opacity: 0.85; }
+  .req-card.rejected { border-right-color: #c03030; opacity: 0.55; }
+
+  .req-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; margin-bottom: 10px; }
+  .req-title { font-family: 'Cairo'; font-size: 15px; font-weight: 700; color: #fff; flex: 1; line-height: 1.5; }
+  .req-status {
+    padding: 3px 11px;
+    border-radius: 14px;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .st-pending { background: rgba(201,162,39,.15); color: var(--gl); border: 1px solid rgba(201,162,39,.35); }
+  .st-reviewing { background: rgba(26,144,144,.15); color: #5cd9d9; border: 1px solid rgba(26,144,144,.35); }
+  .st-completed { background: rgba(63,191,112,.15); color: #5cd99b; border: 1px solid rgba(63,191,112,.35); }
+  .st-rejected { background: rgba(192,48,48,.15); color: #e85050; border: 1px solid rgba(192,48,48,.35); }
+
+  .req-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 18px;
+    font-size: 11px;
+    color: rgba(255,255,255,.55);
+  }
+  .req-meta span { display: flex; align-items: center; gap: 4px; }
+  .req-id {
+    font-family: monospace;
+    direction: ltr;
+    font-size: 10px;
+    background: rgba(255,255,255,.07);
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: rgba(255,255,255,.7);
+  }
+
+  /* MODAL */
+  .modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 100;
+    padding: 20px;
+    overflow-y: auto;
+    backdrop-filter: blur(4px);
+  }
+  .modal.open { display: flex; align-items: start; justify-content: center; }
+  .modal-box {
+    background: linear-gradient(145deg, #0a2828, #051818);
+    border: 1px solid rgba(201,162,39,.25);
+    border-radius: 14px;
+    max-width: 780px;
+    width: 100%;
+    margin: auto;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+  .modal-head {
+    background: linear-gradient(135deg, var(--teal), var(--td));
+    color: #fff;
+    padding: 18px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(201,162,39,.3);
+  }
+  .modal-head h3 { font-family: 'Cairo'; font-size: 16px; font-weight: 800; flex: 1; padding-left: 10px; }
+  .modal-close {
+    background: rgba(255,255,255,.15);
+    color: #fff;
+    border: none;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .modal-body { padding: 24px; }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .detail-row { font-size: 12px; }
+  .detail-row.full { grid-column: 1 / -1; }
+  .detail-row .lbl { color: var(--gl); font-size: 10px; font-weight: 700; margin-bottom: 4px; letter-spacing: 0.5px; }
+  .detail-row .val {
+    background: rgba(13,122,122,.08);
+    border: 1px solid rgba(13,122,122,.15);
+    padding: 10px 14px;
+    border-radius: 8px;
+    color: rgba(255,255,255,.85);
+    line-height: 1.6;
+    word-wrap: break-word;
+    font-size: 13px;
+  }
+
+  .action-bar {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+    padding-top: 18px;
+    border-top: 1px solid rgba(13,122,122,.2);
+  }
+  .btn {
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .btn-primary { background: linear-gradient(135deg, var(--gold), #a88020); color: #fff; }
+  .btn-secondary { background: linear-gradient(135deg, var(--teal), var(--td)); color: #fff; }
+  .btn-danger { background: rgba(192,48,48,.15); color: #e85050; border: 1px solid rgba(192,48,48,.4); }
+  .btn-danger:hover { background: rgba(192,48,48,.25); }
+  .btn-warn { background: rgba(26,144,144,.15); color: #5cd9d9; border: 1px solid rgba(26,144,144,.4); }
+  .btn-warn:hover { background: rgba(26,144,144,.25); }
+  .btn-ghost { background: rgba(255,255,255,.06); color: rgba(255,255,255,.6); border: 1px solid rgba(255,255,255,.1); }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--teal), var(--td));
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 8px;
+    z-index: 200;
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    display: none;
+    border: 1px solid rgba(201,162,39,.3);
+  }
+  .toast.show { display: block; }
+  .toast.err { background: linear-gradient(135deg, #c03030, #8a2020); }
+
+  @media (max-width: 768px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .detail-grid { grid-template-columns: 1fr; }
+    .req-head { flex-direction: column; align-items: stretch; }
+    .topbar { padding: 14px 16px; flex-direction: column; gap: 12px; align-items: stretch; }
+    .topbar-btn { align-self: flex-end; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="login-wrap" id="loginScreen">
+  <div class="login-box">
+    <div class="badge">🔐</div>
+    <h1>لوحة تحكم <span>المدير</span></h1>
+    <p>قسم الدراسات والتصاميم · جامعة أم القرى</p>
+    <input type="password" id="adminPwd" placeholder="كلمة مرور المدير" onkeypress="if(event.key==='Enter')doLogin()">
+    <button onclick="doLogin()">دخول ←</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="app" id="app">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-badge">🎓</div>
+      <div>
+        <div class="topbar-title">لوحة تحكم المدير — <span>قسم الدراسات</span></div>
+        <div class="topbar-sub">جامعة أم القرى · وكالة الجامعة للمشاريع · ١٤٤٧هـ</div>
+      </div>
+    </div>
+    <button class="topbar-btn" onclick="doLogout()">🚪 خروج</button>
+  </div>
+
+  <div class="container">
+
+    <div class="stats">
+      <div class="stat pen"><div class="v" id="cPen">0</div><div class="l">طلبات جديدة</div></div>
+      <div class="stat rev"><div class="v" id="cRev">0</div><div class="l">قيد الدراسة</div></div>
+      <div class="stat don"><div class="v" id="cDon">0</div><div class="l">دراسات مكتملة</div></div>
+      <div class="stat rej"><div class="v" id="cRej">0</div><div class="l">طلبات مرفوضة</div></div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-f="all" onclick="setFilter('all')">الكل <span class="count" id="nAll">0</span></button>
+      <button class="tab" data-f="pending" onclick="setFilter('pending')">جديدة <span class="count" id="nPen">0</span></button>
+      <button class="tab" data-f="reviewing" onclick="setFilter('reviewing')">قيد الدراسة <span class="count" id="nRev">0</span></button>
+      <button class="tab" data-f="completed" onclick="setFilter('completed')">مكتملة <span class="count" id="nDon">0</span></button>
+      <button class="tab" data-f="rejected" onclick="setFilter('rejected')">مرفوضة <span class="count" id="nRej">0</span></button>
+      <button class="tab" onclick="loadRequests()" style="margin-right:auto;">🔄 تحديث</button>
+    </div>
+
+    <div id="listContainer"></div>
+
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal" id="detailModal" onclick="if(event.target===this)closeDetail()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="dmTitle">تفاصيل الطلب</h3>
+      <button class="modal-close" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="modal-body" id="dmBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var state = { adminKey: '', requests: [], filter: 'all', currentReq: null };
+
+// ═══ AUTH ═══
+function doLogin() {
+  var pwd = document.getElementById('adminPwd').value.trim();
+  if (!pwd) { document.getElementById('loginErr').textContent = 'أدخل كلمة المرور'; return; }
+  state.adminKey = pwd;
+  document.getElementById('loginErr').textContent = 'جارٍ التحقق...';
+
+  fetch('/api/requests', { method: 'GET', headers: { 'x-admin-key': pwd } })
+    .then(function(r) {
+      if (r.status === 401) {
+        document.getElementById('loginErr').textContent = 'كلمة مرور خاطئة';
+        state.adminKey = '';
+        return null;
+      }
+      return r.json();
+    })
+    .then(function(data) {
+      if (!data) return;
+      if (data.error) {
+        document.getElementById('loginErr').textContent = data.error;
+        state.adminKey = '';
+        return;
+      }
+      try { sessionStorage.setItem('uqu_admin', pwd); } catch(e){}
+      state.requests = data.requests || [];
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      renderAll();
+    })
+    .catch(function(err) {
+      document.getElementById('loginErr').textContent = 'خطأ في الاتصال: ' + err.message;
+      state.adminKey = '';
+    });
+}
+
+function doLogout() {
+  if (!confirm('تسجيل الخروج؟')) return;
+  state.adminKey = '';
+  try { sessionStorage.removeItem('uqu_admin'); } catch(e){}
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('adminPwd').value = '';
+  document.getElementById('loginErr').textContent = '';
+}
+
+// Auto-login
+(function() {
+  try {
+    var saved = sessionStorage.getItem('uqu_admin');
+    if (saved) {
+      document.getElementById('adminPwd').value = saved;
+      setTimeout(doLogin, 100);
+    }
+  } catch(e){}
+})();
+
+// ═══ LOAD ═══
+function loadRequests() {
+  fetch('/api/requests', { headers: { 'x-admin-key': state.adminKey } })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.error) { toast(data.error, true); return; }
+      state.requests = data.requests || [];
+      renderAll();
+      toast('تم التحديث');
+    })
+    .catch(function(err) { toast('خطأ: ' + err.message, true); });
+}
+
+// ═══ RENDER ═══
+function renderAll() {
+  var c = { pending: 0, reviewing: 0, completed: 0, rejected: 0 };
+  state.requests.forEach(function(r) { if (c.hasOwnProperty(r.status)) c[r.status]++; });
+  document.getElementById('cPen').textContent = c.pending;
+  document.getElementById('cRev').textContent = c.reviewing;
+  document.getElementById('cDon').textContent = c.completed;
+  document.getElementById('cRej').textContent = c.rejected;
+  document.getElementById('nAll').textContent = state.requests.length;
+  document.getElementById('nPen').textContent = c.pending;
+  document.getElementById('nRev').textContent = c.reviewing;
+  document.getElementById('nDon').textContent = c.completed;
+  document.getElementById('nRej').textContent = c.rejected;
+  renderList();
+}
+
+function setFilter(f) {
+  state.filter = f;
+  document.querySelectorAll('.tab').forEach(function(t) {
+    if (t.dataset.f === f) t.classList.add('active');
+    else if (t.dataset.f) t.classList.remove('active');
+  });
+  renderList();
+}
+
+function esc(s) {
+  if (s === null || s === undefined) return '';
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function statusLabel(s) {
+  var m = {
+    pending: ['جديد', 'st-pending'],
+    reviewing: ['قيد الدراسة', 'st-reviewing'],
+    completed: ['مكتمل ✓', 'st-completed'],
+    rejected: ['مرفوض', 'st-rejected']
+  };
+  return m[s] || [s, 'st-pending'];
+}
+
+function formatDate(iso) {
+  if (!iso) return '';
+  try {
+    var d = new Date(iso);
+    return d.toLocaleDateString('ar-SA') + ' ' + d.toLocaleTimeString('ar-SA', {hour:'2-digit',minute:'2-digit'});
+  } catch(e) { return iso; }
+}
+
+function renderList() {
+  var list = state.requests;
+  if (state.filter !== 'all') list = list.filter(function(r) { return r.status === state.filter; });
+  var container = document.getElementById('listContainer');
+  if (list.length === 0) {
+    container.innerHTML = '<div class="empty"><div class="icon">📭</div><p>لا توجد طلبات في هذه الفئة</p></div>';
+    return;
+  }
+  var html = '';
+  list.forEach(function(r) {
+    var st = statusLabel(r.status);
+    html += '<div class="req-card ' + esc(r.status) + '" onclick="showDetail(\'' + esc(r.id) + '\')">';
+    html += '<div class="req-head">';
+    html += '<div class="req-title">' + esc(r.projectName) + '</div>';
+    html += '<div class="req-status ' + st[1] + '">' + st[0] + '</div>';
+    html += '</div>';
+    html += '<div class="req-meta">';
+    html += '<span class="req-id">' + esc(r.id) + '</span>';
+    html += '<span>👤 ' + esc(r.requesterName) + '</span>';
+    html += '<span>🏢 ' + esc(r.department) + '</span>';
+    html += '<span>📅 ' + formatDate(r.submittedAt) + '</span>';
+    html += '<span>🏗️ ' + esc(r.projectType) + '</span>';
+    html += '</div></div>';
+  });
+  container.innerHTML = html;
+}
+
+// ═══ DETAIL ═══
+function showDetail(id) {
+  var r = state.requests.find(function(x) { return x.id === id; });
+  if (!r) return toast('الطلب غير موجود', true);
+  state.currentReq = r;
+  document.getElementById('dmTitle').textContent = r.projectName;
+
+  var html = '<div class="detail-grid">';
+  html += detailRow('رقم الطلب', r.id, false);
+  html += detailRow('الحالة', statusLabel(r.status)[0], false);
+  html += detailRow('مقدم الطلب', r.requesterName, false);
+  html += detailRow('القسم', r.department, false);
+  if (r.email) html += detailRow('البريد الإلكتروني', r.email, false);
+  if (r.phone) html += detailRow('الجوال', r.phone, false);
+  html += detailRow('نوع المشروع', r.projectType, false);
+  if (r.location) html += detailRow('الموقع', r.location, false);
+  if (r.estimatedCost) html += detailRow('التكلفة التقديرية', r.estimatedCost + ' ريال', false);
+  if (r.duration) html += detailRow('المدة المقترحة', r.duration + ' شهر', false);
+  if (r.beneficiary) html += detailRow('الجهة المستفيدة', r.beneficiary, false);
+  html += detailRow('تاريخ الطلب', formatDate(r.submittedAt), false);
+  html += detailRow('وصف المشروع', r.description, true);
+  if (r.justification) html += detailRow('المبررات', r.justification, true);
+  if (r.notes) html += detailRow('ملاحظات مقدم الطلب', r.notes, true);
+  if (r.adminNotes) html += detailRow('ملاحظات المدير', r.adminNotes, true);
+  html += '</div>';
+
+  html += '<div class="action-bar">';
+  if (r.status !== 'rejected') {
+    html += '<button class="btn btn-primary" onclick="openGen()">✨ تحضير الدراسة</button>';
+  }
+  if (r.status !== 'completed' && r.status !== 'rejected') {
+    html += '<button class="btn btn-warn" onclick="addNotes()">📝 ملاحظة</button>';
+    html += '<button class="btn btn-danger" onclick="rejectReq()">✕ رفض</button>';
+  }
+  html += '<button class="btn btn-ghost" onclick="deleteReq()">🗑️ حذف</button>';
+  html += '</div>';
+
+  document.getElementById('dmBody').innerHTML = html;
+  document.getElementById('detailModal').classList.add('open');
+}
+
+function detailRow(lbl, val, full) {
+  return '<div class="detail-row' + (full ? ' full' : '') + '"><div class="lbl">' + esc(lbl) + '</div><div class="val">' + esc(val || '—') + '</div></div>';
+}
+
+function closeDetail() {
+  document.getElementById('detailModal').classList.remove('open');
+  state.currentReq = null;
+}
+
+// ═══ ACTIONS ═══
+function updateRequest(id, updates) {
+  var body = Object.assign({ id: id }, updates);
+  return fetch('/api/update', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-admin-key': state.adminKey },
+    body: JSON.stringify(body)
+  }).then(function(r) { return r.json(); });
+}
+
+function openGen() {
+  if (!state.currentReq) return;
+  // Mark as reviewing if currently pending
+  if (state.currentReq.status === 'pending') {
+    updateRequest(state.currentReq.id, { status: 'reviewing' }).then(function() {
+      window.open('/generator.html?id=' + encodeURIComponent(state.currentReq.id), '_blank');
+      closeDetail();
+      loadRequests();
+    });
+  } else {
+    window.open('/generator.html?id=' + encodeURIComponent(state.currentReq.id), '_blank');
+    closeDetail();
+  }
+}
+
+function rejectReq() {
+  if (!state.currentReq) return;
+  var reason = prompt('سبب الرفض (اختياري):');
+  if (reason === null) return;
+  updateRequest(state.currentReq.id, { status: 'rejected', adminNotes: reason }).then(function(data) {
+    if (data.error) return toast(data.error, true);
+    toast('تم الرفض');
+    closeDetail();
+    loadRequests();
+  });
+}
+
+function addNotes() {
+  if (!state.currentReq) return;
+  var note = prompt('ملاحظات المدير:', state.currentReq.adminNotes || '');
+  if (note === null) return;
+  updateRequest(state.currentReq.id, { status: 'reviewing', adminNotes: note }).then(function(data) {
+    if (data.error) return toast(data.error, true);
+    toast('تم حفظ الملاحظات');
+    closeDetail();
+    loadRequests();
+  });
+}
+
+function deleteReq() {
+  if (!state.currentReq) return;
+  if (!confirm('حذف الطلب نهائياً؟ لا يمكن التراجع.')) return;
+  fetch('/api/delete', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-admin-key': state.adminKey },
+    body: JSON.stringify({ id: state.currentReq.id })
+  }).then(function(r) { return r.json(); }).then(function(data) {
+    if (data.error) return toast(data.error, true);
+    toast('تم الحذف');
+    closeDetail();
+    loadRequests();
+  });
+}
+
+// ═══ TOAST ═══
+function toast(msg, err) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (err ? ' err' : '');
+  setTimeout(function() { t.classList.remove('show'); }, 3500);
+}
+</script>
+
+</body>
+</html>
